@@ -1,4 +1,58 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
+
+const Filter = ({ searchTerm, handleSearchChange }) => {
+  return (
+    <div>
+      <h3>Search</h3>
+      <input
+        type="text"
+        placeholder="Search by name"
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
+    </div>
+  );
+};
+
+const PersonForm = ({
+  newName,
+  newNumber,
+  handleNameChange,
+  handleNumberChange,
+  handleSubmit,
+}) => {
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        name:{" "}
+        <input type="text" value={newName} onChange={handleNameChange} />
+      </div>
+      <div>
+        number:{" "}
+        <input type="number" value={newNumber} onChange={handleNumberChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
+const Persons = ({ filteredPersons }) => {
+  return (
+    <div>
+      <h3>Numbers</h3>
+      <ul>
+        {filteredPersons.map((person, index) => (
+          <li key={index}>
+            {person.name}: {person.number}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -10,6 +64,18 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const handleNameChange = (e) => {
+    setNewName(e.target.value);
+  };
+
+  const handleNumberChange = (e) => {
+    setNewNumber(e.target.value);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,7 +91,7 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`);
     } else {
       // Create a new person object with the entered name
-      const newPerson = { name: newName, number: newNumber };
+      const newPerson = { name: newName, number: newNumber, id: persons.length + 1 };
 
       // Update the persons state with the new person
       setPersons([...persons, newPerson]);
@@ -44,45 +110,20 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      
-      <form onSubmit={handleSubmit}>
-        <div>
-          name:{" "}
-          <input
-            type="text"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-        </div>
-        <div>
-          number:{" "}
-          <input
-            type="number"
-            value={newNumber}
-            onChange={(e) => setNewNumber(e.target.value)}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
 
-      <h2>Search</h2>
-      <input
-        type="text"
-        placeholder="Search by name"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+      <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
+
+      <h3>Add a new</h3>
+
+      <PersonForm
+        newName={newName}
+        newNumber={newNumber}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        handleSubmit={handleSubmit}
       />
 
-      <h2>Numbers</h2>
-      <ul>
-        {filteredPersons.map((person, index) => (
-          <li key={index}>
-            {person.name}: {person.number}
-          </li>
-        ))}
-      </ul>
+      <Persons filteredPersons={filteredPersons} />
     </div>
   );
 };
